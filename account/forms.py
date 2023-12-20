@@ -12,14 +12,14 @@ class UserRegistrationForm(forms.Form):
         attrs={'class': 'form-control', 'placeholder': 'Enter confirm password'}))
 
     def clean_email(self):
-        email = self.email
+        email = self.cleaned_data['email']
         user = User.objects.filter(email=email).exists()
         if user:
             raise ValidationError('This email already exists')
         return email
 
     def clean_username(self):
-        username = self.username
+        username = self.cleaned_data['username']
         user = User.objects.filter(username=username)
         if user:
             raise ValidationError('This username already exists')
@@ -32,3 +32,8 @@ class UserRegistrationForm(forms.Form):
 
         if p1 and p2 and p1 != p2:
             raise ValidationError('passwords do not match')
+
+
+class UserLoginForm(forms.Form):
+    username = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control'}))
