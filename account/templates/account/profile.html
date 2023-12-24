@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {{ user.username }}
+    <hr>
+    <div class="card-body">
+        {% for post in posts %}
+            {{ post.slug }}
+            {{ post.updated }}
+            <hr>
+        {% endfor %}
+    </div>
+{% endblock content %}
