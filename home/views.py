@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.utils.text import slugify
 from .models import Post
-from .forms import PostUpdateForm
+from .forms import PostCreateUpdateForm
 
 
 class HomeView(View):
@@ -32,7 +32,7 @@ class PostDeleteView(LoginRequiredMixin, View):
 
 
 class PostUpdateView(LoginRequiredMixin, View):
-    form_class = PostUpdateForm
+    form_class = PostCreateUpdateForm
 
     def setup(self, request, *args, **kwargs):
         self.post_instance = Post.objects.get(id=kwargs['post_id'])
@@ -58,3 +58,22 @@ class PostUpdateView(LoginRequiredMixin, View):
             new_post.slug = slugify(form.cleaned_data['body'][:30])
             new_post.save()
             return redirect('home:detail', post.id, post.slug)
+
+
+class CreatePostView(LoginRequiredMixin, View):
+    form_class = PostCreateUpdateForm
+
+    def get(self, request):
+        form = self.form_class()
+        return render(request, 'home/create_post.html', {'form': form})
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            new_post = form.save(commit=False)
+            new_post.slug = slugify(form.cleaned_data['body'])
+            new_post.user = request.user
+            new_post.save()
+            messages.success(request, 'your post has been created', 'success')
+            return redirect('home:detail', new_post.id, new_post.slug)
+
