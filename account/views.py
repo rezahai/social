@@ -27,6 +27,11 @@ class UserRegistrationView(View):
 class UserLoginView(View):
     form_class = UserLoginForm
 
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('home:home')
+        return super().dispatch(request, *args, **kwargs)
+
     def get(self, request):
         form = self.form_class()
         return render(request, 'account/login.html', {'form': form})
@@ -43,7 +48,8 @@ class UserLoginView(View):
             messages.error(request, 'Invalid username or password', 'danger')
             return render(request, 'account/login.html', {'form': form})
 
-class UserLogoutView(UserLoginView, View):
+
+class UserLogoutView(LoginRequiredMixin, View):
     def get(self, request):
         if request.user.is_authenticated:
             logout(request)
