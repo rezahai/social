@@ -4,6 +4,12 @@
     {% if request.user.id == user.id %}
         <a class="btn btn-primary" href="{% url 'home:post_create' %}">create post</a>
     {% endif %}
+
+    {% if request.user.id != user.id and not is_following %}
+        <a class="btn btn-primary" href="{% url 'account:follower' user.id %}">Follow</a>
+    {% elif request.user.id != user.id and  is_following%}
+        <a class="btn btn-danger" href="{% url 'account:unfollower' user.id %}">Unfollow</a>
+    {% endif %}
     {{ user.username }}
     <hr>
     <div class="card-body">

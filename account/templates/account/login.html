@@ -6,4 +6,5 @@
         {{ form.as_p }}
         <input type="submit" value="Login">
     </form>
+    <a class="btn btn-primary" href="{% url 'account:rest_password' %}">Reset Password</a>
 {% endblock content %}
