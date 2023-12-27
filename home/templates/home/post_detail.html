@@ -9,5 +9,41 @@
         <a href="{% url 'account:profile' post.user.id %}">{{ post.user.username }}</a>
         <p>{{ post.updated }}</p>
         <p>{{ post.body }}</p>
+        <a class="{% if can_like %} disabled btn btn-primary col-md-2 {% endif %} btn btn-primary" href="{% url 'home:post_like' post.id %}">Like
+            {{ post.like_count }}</a>
+        <hr>
+        {% if request.user.is_authenticated %}
+            <div>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <input type="submit" value="send">
+                </form>
+            </div>
+        {% else %}
+            <p>only logged-in user can comment</p>
+        {% endif %}
+        {% for comment in comments %}
+            <div class="card-header">
+                <p>{{ comment.user }}**|||**{{ comment.created |timesince }}</p>
+                <p class="card-body">{{ comment.body }}</p>
+                {% if request.user.is_authenticated %}
+                    <form action="{% url 'home:add_reply' post.id comment.id %}" method="post">
+                        {% csrf_token %}
+                        {{ form_reply.as_p }}
+                        <input type="submit" value="send">
+                    </form>
+                {% endif %}
+                {% with replies=comment.reply_comments.all %}
+                    {% for reply in  replies %}
+                        <p>{{ reply.user }}</p>
+                        <p>{{ reply.body }}</p>
+                    {% endfor %}
+                {% endwith %}
+                <br>
+            </div>
+        {% empty %}
+            <p>no comment yet</p>
+        {% endfor %}
     </div>
 {% endblock content %}

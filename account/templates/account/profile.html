@@ -3,6 +3,7 @@
 {% block content %}
     {% if request.user.id == user.id %}
         <a class="btn btn-primary" href="{% url 'home:post_create' %}">create post</a>
+        <a class="btn btn-info" href="{% url 'account:edite_user' %}">Edit Profile</a>
     {% endif %}
 
     {% if request.user.id != user.id and not is_following %}

@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import (UserRegistrationView, UserLoginView, UserLogoutView, UserProfileView, UserPasswordResetView,
                     UserPasswordRestDoneView, UserPasswordResetConfirmView, UserPasswordResetCompleteView,
-                    UserFollowView, UserUnfollowView)
+                    UserFollowView, UserUnfollowView, EditProfileView)
 
 
 app_name = 'account'
@@ -16,4 +16,5 @@ urlpatterns = [
     path('confirm/complete', UserPasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('follow/<int:user_id>/', UserFollowView.as_view(), name='follower'),
     path('unfollow/<int:user_id>/', UserUnfollowView.as_view(), name='unfollower'),
+    path('edit_user/', EditProfileView.as_view(), name='edite_user'),
 ]

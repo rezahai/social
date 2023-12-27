@@ -1,7 +1,7 @@
 from django.contrib.auth.views import PasswordResetView
 from django.shortcuts import render, redirect
 from django.views import View
-from .forms import UserRegistrationForm, UserLoginForm
+from .forms import UserRegistrationForm, UserLoginForm, EditUserForm
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -124,3 +124,24 @@ class UserUnfollowView(LoginRequiredMixin, View):
 
     def post(self, request, user_id):
         pass
+
+
+class EditProfileView(LoginRequiredMixin, View):
+    form_class = EditUserForm
+
+    def get(self, request):
+        user = User.objects.get(id=request.user.id)
+        form = self.form_class(instance=user.profile, initial={'email': request.user.email})
+        return render(request, 'account/edit_profile.html', {'form': form})
+
+    def post(self, request):
+        user = User.objects.get(id=request.user.id)
+        form = self.form_class(request.POST, instance=user.profile)
+        if form.is_valid():
+            form.save()
+            request.user.email = form.cleaned_data['email']
+            request.user.save()
+            messages.success(request, 'profile updated', 'success')
+            return redirect('account:profile', request.user.id)
+
+
